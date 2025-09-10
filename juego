@@ -1,0 +1,64 @@
+import pygame
+import random
+
+personaje = 20
+dx = 1000
+posicion_x = dx/2
+dy = 400
+mx = 0
+pe = random.randint(personaje, dx - personaje )
+pe2 = random.randint(personaje, dx - personaje )
+py = 10
+marca = 0
+
+pygame.init()
+pantalla = pygame.display.set_mode((dx, dy))
+pygame.display.set_caption("Dodge")
+reloj = pygame.time.Clock()
+fuente = pygame.font.Font(None, 36)
+mensaje = fuente.render("Perdiste", True, (255, 255, 255))
+correr = True
+
+while correr:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            correr = False
+
+        if event.type == pygame.KEYUP:
+            mx = 0
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                mx = -personaje
+            if event.key == pygame.K_RIGHT:
+                mx = personaje
+
+    posicion_x += mx
+    posicion_x = max(0, min(posicion_x, dx - personaje))
+
+    pantalla.fill((100, 60, 255))
+    puntaje = fuente.render(f"Puntaje: {marca}", True, (0, 0, 0) )
+    pantalla.blit(puntaje, (10, 10))
+    jug = pygame.draw.rect(pantalla, (255, 255, 255), (posicion_x, dy-20, personaje, personaje))
+    e1 = pygame.draw.rect(pantalla, (255, 0, 0), (pe, py, personaje*2, personaje*2))
+    e2 = pygame.draw.rect(pantalla, (255, 0, 0), (pe2, py, personaje*1.5, personaje*1.5))
+    pygame.display.update()
+
+    py += (personaje + 2)
+
+    if jug.colliderect(e1) or jug.colliderect(e2):
+        py = 0
+        posicion_x = 0
+        pantalla.blit(mensaje, (dx/2, dy/2))
+        pygame.display.update()
+        pygame.time.wait(2000)
+        correr = False
+
+    if py >= dy:
+        py = 10
+        pe = random.randint(0, dx - personaje)
+        pe2 = random.randint(0, dx - personaje)
+        marca += 1
+
+    reloj.tick(25)
+
+pygame.quit()
