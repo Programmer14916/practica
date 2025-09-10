@@ -1,0 +1,53 @@
+#Ataca al objetiov
+
+import pygame
+import random
+
+dx = 1000
+dy = 400
+pax = random.randint(1, dx - 20)
+pay = random.randint(1, dy - 20)
+puntaje = 0
+mal = 0
+tiempo = 15000
+
+pygame.init()
+fuente = pygame.font.Font(None, 40)
+correr = True
+pantalla = pygame.display.set_mode((dx, dy))
+pygame.display.set_caption("Ataca el objetivo")
+
+while correr:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            correr = False
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            posic = pygame.mouse.get_pos()
+            ob = pygame.Rect(pax, pay, 20, 20)
+            if ob.collidepoint(posic):
+                    puntaje += 1
+                    pax = random.randint(1, dx - 20)
+                    pay = random.randint(1, dy - 20)
+            else:
+                mal += 1
+        
+        puntaje_final = puntaje - mal
+
+    tiempo -=1
+
+    if tiempo == 0:
+        correr = False
+        print(f"Tu puntuación es: {puntaje_final}")
+
+    pantalla.fill((128, 191, 255))
+    ob = pygame.draw.rect(pantalla, (155, 155, 155), (pax, pay, 20, 20))
+    marca = fuente.render(f"Puntaje: {puntaje}", True, (100, 100, 100))
+    pantalla.blit(marca, (10, 10))
+    pec = fuente.render(f"En contra: {mal}", True, (100, 100, 100))
+    time = fuente.render(f"Tiempo: {int(tiempo/1000)}", True, (255, 0, 0))
+    pantalla.blit(time, (750, 350))
+    pantalla.blit(pec, (800, 10))
+    pygame.display.update()
+
+pygame.quit()
